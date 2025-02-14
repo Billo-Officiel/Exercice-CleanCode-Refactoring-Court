@@ -4,127 +4,74 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-//// Company class
 public class CompanyPayroll {
 final private List<Employee> eList;
-private List<Paycheck>       p;
+private List<Paycheck> paychecks;
 private List<Boolean> h; // who takes holidays
-    // end private attributes
-
-    //  constructor
     public CompanyPayroll() {
         this.eList = new ArrayList<>();
-        this.p     = new ArrayList<>();
+        this.paychecks = new ArrayList<>();
         h          = new ArrayList<>();
     }
 
-
-
-
-    // process pending
-    public void processPending() {
-        IntStream.range(0, this.p.size()).forEach((i) -> this.h.set(i, false));
-        for (int i=1; i  <= this.p.size(); ++i) { // iterate over all employees
-            Paycheck p = this.p.get((i)  - 1);
+    public void processPendingPaychecks() {
+        IntStream.range(0, this.paychecks.size()).forEach((i) -> this.h.set(i, false));
+        for (int i = 1; i  <= this.paychecks.size(); ++i) { // iterate over all employees
+            Paycheck p = this.paychecks.get((i)  - 1);
             System.out.println("Sending " + p.getAmount() + "$ to " + p.getTo());
-        }this.p.clear();
+        }this.paychecks.clear();
     }
 
-
-    /***
-     * add employee
-     * @param employee: employee to add
-     */
-    public void addEmp(Employee employee) {
+    public void addEmployee(Employee employee) {
         eList.add(employee);
         this.h.add(false);
 
     }
 
-    /***
-     * find
-     * @return found
-     */
-    public List<Employee> findSWE() { // software engineer
-
+    public List<Employee> findSoftwareEngineer() {
         List<Employee> es = new ArrayList<>();
-        for (int i = 1; i <= eList.size(); ++i) {
-
-            if (eList.get(i - 1).getRole().equals("engineer")) {
-                es.add(eList.get(i - 1));
-            }
-
-
-        }
-        return es;
-
-
-    }
-
-    /***
-     * todo
-     * @return
-     */
-    public List<Employee> findMgs() { // find managers
-
-        List<Employee> es = new ArrayList<>();
-        for (int i = 1; i <= eList.size(); ++i) {
-            if (eList.get(i - 1).getRole().equals("manager")) {
-                es.add(eList.get(i - 1));
+        for (Employee employee : eList) {
+            if (employee.getRole().equals("engineer")) {
+                es.add(employee);
             }
         }
         return es;
     }
 
-    /*
-    public void test1() {
-        this.findManagers();
-        this.pay();
-        this.fire(e);
-    }
-    */
-
-
-
-    /**/
-    public List<Employee> find_Vice_Presidents() {
+    public List<Employee> findManagers() {
         List<Employee> es = new ArrayList<>();
-        for (int i = 1; i <= eList.size(); ++i) {
-            if (eList.get(i - 1).getRole().equals("vp")) {
-                es.add(eList.get(i - 1));
+        for (Employee employee : eList) {
+            if (employee.getRole().equals("manager")) {
+                es.add(employee);
             }
         }
         return es;
     }
-    // insert documentation here
-    public List<Employee> find_interns() {  // snake case is better
+
+    public List<Employee> findVicePresidents() {
         List<Employee> es = new ArrayList<>();
-        for (int i = 1; i <= eList.size(); ++i) {
-            if (eList.get(i - 1).getRole().equals("intern")) {
-                es.add(eList.get(i - 1));
+        for (Employee employee : eList) {
+            if (employee.getRole().equals("vp")) {
+                es.add(employee);
+            }
+        }
+        return es;
+    }
+    public List<Employee> findInterns() {
+        List<Employee> es = new ArrayList<>();
+        for (Employee employee : eList) {
+            if (employee.getRole().equals("intern")) {
+                es.add(employee);
             }
         }
         return es;
     }
 
 
-
-
-
-
-    // create pending
-    public void createPending() {
-        for (int i = 1; i <= eList.size(); ++i) {               // for loop
-            Employee e = eList.get(i - 1);                      // employee
-            if (e instanceof HourlyEmployee) {                 // is hourly
-                    HourlyEmployee he = (HourlyEmployee) e;
-                p.add(new Paycheck(e.getName(), he.getAmount() * he.getRate()));
-            } else if (e instanceof SalariedEmployee) {        // is salaried
-                SalariedEmployee se = (SalariedEmployee) e;
-                p.add(new Paycheck(e.getName(), ((SalariedEmployee) e).getBiweekly()));
-            } else {                                                 /// error
-                throw new RuntimeException("something happened");
-            }
+    public void createPendingPaychecks() {
+        for (int i = 1; i <= eList.size(); ++i) {
+            Employee e = eList.get(i - 1);
+            paychecks.add(new Paycheck(e.getName(), e.getBiweeklySalary()));
         }
     }
 
@@ -160,23 +107,23 @@ private List<Boolean> h; // who takes holidays
     ///Statistics
     public float avgPayCehck_pending() {
         float out_float;
-        if (this.p.size() == 0) {
+        if (this.paychecks.size() == 0) {
             return -1f;
         }
         float t_float = 0.f;
-        for (int o = 0; o < this.p.size(); o = o + 1) {
-            Paycheck p = this.p.get(o);
+        for (int o = 0; o < this.paychecks.size(); o = o + 1) {
+            Paycheck p = this.paychecks.get(o);
             t_float += p.getAmount();
         }
-        out_float = t_float / this.p.size();
+        out_float = t_float / this.paychecks.size();
         return out_float;
     }
 
 
     public float getTotalmoney() {
         float t_float = 0.f;
-        for (int o = 0; o < this.p.size(); o = o + 1) {
-            Paycheck p = this.p.get(o);
+        for (int o = 0; o < this.paychecks.size(); o = o + 1) {
+            Paycheck p = this.paychecks.get(o);
             t_float += p.getAmount();
         }
         return t_float;
@@ -185,8 +132,8 @@ private List<Boolean> h; // who takes holidays
 
 
 
-    public List<Paycheck> getPendings() {
-        return this.p;
+    public List<Paycheck> getPendingPaychecks() {
+        return this.paychecks;
     }
 
 }
