@@ -16,6 +16,10 @@ public class SalariedEmployee extends Employee {
         this.biweekly = biweekly;
     }
 
+    public float getBiweeklySalary() {
+        return biweekly;
+    }
+
     @Override
     public String toString() {
         return "SalariedEmployee{" +

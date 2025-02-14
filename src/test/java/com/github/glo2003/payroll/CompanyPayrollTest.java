@@ -18,9 +18,10 @@ class CompanyPayrollTest {
     public static final float RAISE = 10;
     public static final float ANOTHER_MONTHLY_AMOUNT = 20_000;
     public static final int VACATION_DAYS = 12;
+    public static final int NUMBER_OF_EMPLOYEES = 5;
     CompanyPayroll company;
-    Employee vp;
-    Employee eng;
+    Employee vicePresident;
+    Employee engineer;
     Employee manager;
     Employee intern1;
     Employee intern2;
@@ -31,8 +32,8 @@ class CompanyPayrollTest {
     @BeforeEach
     void setUp() {
         company = new CompanyPayroll();
-        vp = new HourlyEmployee("Alice", "vp", 25, 100, 35.5f * 2);
-        eng = new SalariedEmployee("Bob", "engineer", 4, 1500);
+        vicePresident = new HourlyEmployee("Alice", "vp", 25, 100, 35.5f * 2);
+        engineer = new SalariedEmployee("Bob", "engineer", 4, 1500);
         manager = new SalariedEmployee("Charlie", "manager", 10, 2000);
         intern1 = new HourlyEmployee("Ernest", "intern", 10, 5, 50 * 2);
         intern2 = new HourlyEmployee("Fred", "intern", 10, 5, 50 * 2);
@@ -44,138 +45,138 @@ class CompanyPayrollTest {
 
     @Test
     void createPendingsCreatesCorrectHourlyPaycheck() {
-        company.addEmp(hourlyEmployee);
+        company.addEmployee(hourlyEmployee);
 
-        company.createPending();
+        company.createPendingPaychecks();
 
-        Paycheck paycheck = company.getPendings().get(0);
+        Paycheck paycheck = company.getPendingPaychecks().get(0);
         assertThat(paycheck.getTo()).isEqualTo(HOURLY_NAME);
         assertThat(paycheck.getAmount()).isEqualTo(HOURLY_RATE * HOURLY_AMOUNT);
     }
 
     @Test
     void createPendingsCreatesCorrectSalariedPaycheck() {
-        company.addEmp(salariedEmployee);
+        company.addEmployee(salariedEmployee);
 
-        company.createPending();
+        company.createPendingPaychecks();
 
-        Paycheck paycheck = company.getPendings().get(0);
+        Paycheck paycheck = company.getPendingPaychecks().get(0);
         assertThat(paycheck.getTo()).isEqualTo(SALARIED_NAME);
         assertThat(paycheck.getAmount()).isEqualTo(BIWEEKLY_AMOUNT);
     }
 
     @Test
     void processPending_shouldRemovePendingPaychecks() {
-        company.addEmp(vp);
-        company.addEmp(eng);
-        company.addEmp(manager);
-        company.addEmp(intern1);
-        company.addEmp(intern2);
-        company.createPending();
+        company.addEmployee(vicePresident);
+        company.addEmployee(engineer);
+        company.addEmployee(manager);
+        company.addEmployee(intern1);
+        company.addEmployee(intern2);
+        company.createPendingPaychecks();
 
-        company.processPending();
+        company.processPendingPaychecks();
 
-        assertThat(company.getPendings().size()).isEqualTo(0);
+        assertThat(company.getPendingPaychecks().size()).isEqualTo(0);
     }
 
     @Test
-    void findSWE_shouldReturnSoftwareEngineers() {
-        company.addEmp(eng);
+    void findSoftwareEngineer_shouldReturnSoftwareEngineers() {
+        company.addEmployee(engineer);
 
-        List<Employee> es = company.findSWE();
-        assertThat(es).containsExactly(eng);
+        List<Employee> employee = company.findSoftwareEngineer();
+        assertThat(employee).containsExactly(engineer);
     }
 
     @Test
-    void findMgs_shouldReturnManagers() {
-        company.addEmp(manager);
+    void findManagersShouldReturnManagers() {
+        company.addEmployee(manager);
 
-        List<Employee> es = company.findMgs();
-        assertThat(es).containsExactly(manager);
+        List<Employee> employee = company.findManagers();
+        assertThat(employee).containsExactly(manager);
     }
 
     @Test
-    void find_Vice_Presidents_shouldReturnVicePresidents() {
-        company.addEmp(vp);
+    void findVicePresidentsShouldReturnVicePresidents() {
+        company.addEmployee(vicePresident);
 
-        List<Employee> es = company.find_Vice_Presidents();
-        assertThat(es).containsExactly(vp);
+        List<Employee> employee = company.findVicePresidents();
+        assertThat(employee).containsExactly(vicePresident);
     }
 
     @Test
     void find_interns_shouldReturnInterns() {
-        company.addEmp(intern1);
-        company.addEmp(intern2);
+        company.addEmployee(intern1);
+        company.addEmployee(intern2);
 
-        List<Employee> es = company.find_interns();
-        assertThat(es).containsExactly(intern1, intern2);
+        List<Employee> employee = company.findInterns();
+        assertThat(employee).containsExactly(intern1, intern2);
     }
 
     @Test
     void createPending_shouldCreatePendingPaycheck() {
-        company.addEmp(vp);
-        company.addEmp(eng);
-        company.addEmp(manager);
-        company.addEmp(intern1);
-        company.addEmp(intern2);
+        company.addEmployee(vicePresident);
+        company.addEmployee(engineer);
+        company.addEmployee(manager);
+        company.addEmployee(intern1);
+        company.addEmployee(intern2);
 
-        company.createPending();
+        company.createPendingPaychecks();
 
-        assertThat(company.getPendings().size()).isEqualTo(5);
+        assertThat(company.getPendingPaychecks().size()).isEqualTo(5);
     }
 
     @Test
     void hourlyEmployee() {
-        company.addEmp(vp);
-        company.addEmp(eng);
-        company.addEmp(manager);
-        company.addEmp(intern1);
-        company.addEmp(intern2);
+        company.addEmployee(vicePresident);
+        company.addEmployee(engineer);
+        company.addEmployee(manager);
+        company.addEmployee(intern1);
+        company.addEmployee(intern2);
 
-        company.createPending();
+        company.createPendingPaychecks();
 
-        assertThat(company.getPendings().size()).isEqualTo(5);
+        assertThat(company.getPendingPaychecks().size()).isEqualTo(NUMBER_OF_EMPLOYEES);
     }
 
     @Test
     void hourlyRaiseShouldRaiseHourlySalary() {
-        company.addEmp(hourlyEmployee);
+        company.addEmployee(hourlyEmployee);
 
         company.salaryRaise(hourlyEmployee, RAISE);
 
-        company.createPending();
-        Paycheck paycheck = company.getPendings().get(0);
+        company.createPendingPaychecks();
+        Paycheck paycheck = company.getPendingPaychecks().get(0);
         assertThat(paycheck.getAmount()).isEqualTo((HOURLY_RATE + RAISE) * HOURLY_AMOUNT);
     }
 
     @Test
     void salariedRaiseShouldRaiseMonthlySalary() {
-        company.addEmp(salariedEmployee);
+        company.addEmployee(salariedEmployee);
 
         company.salaryRaise(salariedEmployee, RAISE);
 
-        company.createPending();
-        Paycheck paycheck = company.getPendings().get(0);
+        company.createPendingPaychecks();
+        Paycheck paycheck = company.getPendingPaychecks().get(0);
         assertThat(paycheck.getAmount()).isEqualTo(BIWEEKLY_AMOUNT + RAISE);
     }
 
     @Test
     void negativeRaiseShouldThrow() {
-        company.addEmp(eng);
+        company.addEmployee(engineer);
 
-        Assert.assertThrows(RuntimeException.class, () -> company.salaryRaise(eng, -1));
+        Assert.assertThrows(RuntimeException.class, () -> company.salaryRaise(engineer, -1));
     }
 
     @Test
     void cannotGiveRaiseIfNotInCompany() {
-        Assert.assertThrows(RuntimeException.class, () -> company.salaryRaise(eng, 10));
+        Assert.assertThrows(RuntimeException.class, () -> company.salaryRaise(engineer, 10));
     }
 
     @Test
     void avgPayCehck_pending() {
-        company.addEmp(salariedEmployee);
-        company.addEmp(anotherSalariedEmployee);
-        company.createPending();
+        company.addEmployee(salariedEmployee);
+        company.addEmployee(anotherSalariedEmployee);
+        company.createPendingPaychecks();
 
         float avg = company.avgPayCehck_pending();
 
@@ -184,9 +185,9 @@ class CompanyPayrollTest {
 
     @Test
     void getTotalmoney() {
-        company.addEmp(salariedEmployee);
-        company.addEmp(anotherSalariedEmployee);
-        company.createPending();
+        company.addEmployee(salariedEmployee);
+        company.addEmployee(anotherSalariedEmployee);
+        company.createPendingPaychecks();
 
         float t = company.getTotalmoney();
 

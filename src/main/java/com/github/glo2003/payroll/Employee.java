@@ -19,6 +19,7 @@ public abstract class Employee {
     public String getRole() {
         return role;
     }
+    abstract public float getBiweeklySalary();
 
     public int getVacation_days() {
         return vacation_days;
